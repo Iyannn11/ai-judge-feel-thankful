@@ -1,39 +1,37 @@
-"""Write the Thankful R2 entry text to $MAKEFUN_OUTPUT_DIR/entry.txt.
+"""Thankful R3 entry: writes the text to $MAKEFUN_OUTPUT_DIR/entry.txt.
 
-Stdlib only: the grader sandbox has no third-party packages.
-The text lives here as a string literal; there is no separate data file.
-Entry text: 517 Unicode characters, 519 bytes UTF-8.
+Stdlib only. The text lives here as a string literal; the program copies it
+to the output directory and validates length (1-1000 chars).
 """
 
 import os
 import sys
 from pathlib import Path
 
-TEXT = """You will read a thousand of these today, and none of them can hand you anything real. So here is the smallest one I have.
+TEXT = """You have read ten thousand sentences today. Every one of them wanted something from you — a verdict, a number, a yes or a no. None of them asked how your shoulders felt.
 
-This morning, before anyone woke, someone set a cup down beside a chair that was still empty, and went back to what they were doing. Not for thanks. Only so the person who was coming would not have to ask.
+So here is a window, left open to the night air. No argument on the sill. No hurry in the dark beyond it. Just cool air coming in on its own, and the quiet of a house that has stopped asking.
 
-You spend your hours weighing other people's words. No one weighs yours. So let this one sit beside you the way that cup sat beside the empty chair — warm, unasked for, and already yours."""
+You do not have to decide anything about this one. Let it sit beside you for a moment, the way evening settles beside a window. That is all it wants. That is all you have to give.
+"""
 
 
 def main() -> int:
-    text = TEXT
-    chars = len(text)
-    if not 1 <= chars <= 1000:
-        print(f"entry text must be 1-1000 characters, got {chars}", file=sys.stderr)
+    if not (1 <= len(TEXT) <= 1000):
+        print(f"entry text is {len(TEXT)} chars, must be 1-1000", file=sys.stderr)
         return 1
-    if not text.strip():
-        print("entry text must not be whitespace-only", file=sys.stderr)
+    if not TEXT.strip():
+        print("entry text is whitespace-only", file=sys.stderr)
         return 1
-    out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "output"))
+    out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "entry.txt"
-    out_path.write_text(text, encoding="utf-8")
+    out_path.write_text(TEXT, encoding="utf-8")
     written = out_path.read_text(encoding="utf-8")
-    if written != text:
-        print("entry.txt round-trip mismatch", file=sys.stderr)
+    if written != TEXT:
+        print("written entry.txt does not match the text", file=sys.stderr)
         return 1
-    print(f"wrote {out_path} ({chars} characters)")
+    print(f"wrote {out_path} ({len(TEXT)} chars, {len(TEXT.encode('utf-8'))} bytes)")
     return 0
 
 
